@@ -1,0 +1,16 @@
+---
+- name: Install inginx
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - nginx
+
+- name: Give deploy user permissions for www directory
+  file:
+    path=/var/www
+    state=directory
+    owner={{ deploy_user }}
+    group=root
+    recurse=yes     
+

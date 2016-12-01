@@ -1,0 +1,31 @@
+---
+- name: Install last version pg sql
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - postgresql
+    - postgresql-contrib
+    - libpq-dev
+    - python-psycopg2
+
+- name: Configure PostgreSQL
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "{{postgresql_conf_directory}}/{{item}}"
+  with_items:
+    - postgresql.conf
+    - pg_hba.conf
+    # - pg_ident.conf
+- name: restart pg service
+  service: name=postgresql state=restarted
+
+- name: set db pg user pass
+  become: true
+  become_user: postgres
+  postgresql_user: 
+    user: postgres 
+    password: '{{ postgres_password }}'
+    encrypted: no   
+

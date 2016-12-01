@@ -1,0 +1,32 @@
+---
+- hosts: test
+  vars:
+    deploy_user: deploy
+    path_to_public_key: ~/.ssh/id_rsa.pub
+    main_password: $6$Cu46Co/6i7.u$TLBf1IdqKAIAssLq/uWvBb66U.xHDCr4IkFDAhjcA7j8Fd7TDeB1z8lvC//AisA1mBlB/9nePMEFQeeURWxsJ/ #need encription see ansible docs for user module
+    postgresql_conf_directory: /etc/postgresql/9.5/main/
+    postgres_password: somepasswordforpostgress
+    rbenv_root: /usr/local/rbenv
+    ruby_version: 2.3.3
+  remote_user: root
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+  roles:
+    - initial
+    - users
+    - postgres
+    - nginx
+    - ansible-role-rbenv
+    
+
+
+# - hosts: test
+#   vars:   
+    
+#   remote_user: deploy
+#   roles:
+    
+    
+    

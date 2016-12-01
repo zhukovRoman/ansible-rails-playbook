@@ -1,0 +1,38 @@
+---
+- name: Create deploy user
+  user: 
+    name: '{{ deploy_user }}'
+    comment: "deploy user" 
+    #shell: /bin/zsh 
+    generate_ssh_key: yes 
+    password: '{{ main_password }}'
+    state: present
+    group: root
+    shell: /bin/bash
+
+
+- name: Add authorized keys to deploy user
+  authorized_key: user={{ deploy_user }} key="{{ item }}" state=present
+  with_file:
+    - {{ path_to_public_key }}
+
+- name: Add authorized keys to root user
+  authorized_key: user=root key="{{ item }}" state=present
+  with_file:
+    - {{ path_to_public_key }}
+
+- name: Add deploy user to sudoers
+  lineinfile:
+    dest=/etc/sudoers
+    regexp='^{{ deploy_user }} ALL'
+    line="{{ deploy_user }}\tALL=(ALL:ALL)\tALL"
+    state=present        
+  
+
+# - name: Add admin user to sudoers
+#   lineinfile:
+#     dest=/etc/sudoers
+#     regexp='^{{ admin_user }} ALL'
+#     line="{{ admin_user }}\tALL=(ALL:ALL)\tALL"
+#     state=present
+     
